@@ -30,17 +30,41 @@ statistics.
 Keep the narrative business-focused, clear, and actionable.
 """
 
-    user_prompt = f"""
-Using the verified findings below, write a concise business narrative
-for Mamaearth.
+    peak_month = datetime.strptime(
+        findings["true_peak_month"]["month"],
+        "%Y-%m"
+    ).strftime("%B %Y")
 
-Verified findings:
+    user_prompt = f"""
+Write a complete business narrative for Mamaearth's regional
+operations and finance heads using the verified findings below.
+
+VERIFIED FINDINGS:
 {json.dumps(findings, indent=2)}
 
-Explain what the data says about returns, revenue quality, the
-highest-risk customer segment, and the revenue peak.
+Your response MUST contain exactly these three labeled sections:
+Situation
+Complication
+Resolution
 
-Follow the required Situation, Complication, and Resolution structure.
+Include all five required numeric findings in the narrative:
+1. Cleaned total revenue: ₹{findings["cleaned_total_revenue_inr"]:,.2f}
+2. COD return rate: {findings["return_rate_by_payment"]["COD"]:.1f}%
+3. Highest-risk segment: {findings["highest_risk_segment"]["payment_method"]}
+   + Tier-{findings["highest_risk_segment"]["city_tier"]},
+   return rate {findings["highest_risk_segment"]["return_rate_pct"]:.1f}%
+4. Duplicate reconciliation difference: ₹{findings["duplicate_reconciliation_delta_inr"]:,.2f}
+5. True peak month: {peak_month}, revenue
+   ₹{findings["true_peak_month"]["revenue_inr"]:,.2f}
+
+Also explain the January apparent revenue and its corrected value
+using the supplied findings.
+
+Write complete paragraphs under all three headings. Explain the
+business implications and practical actions. Do not return a partial
+answer, a single sentence, or headings without their sections.
+
+Use only numbers from the supplied findings. Do not invent statistics.
 """
 
     try:
@@ -131,34 +155,33 @@ def check_narrative_numbers(narrative: str) -> bool:
     """Check that all required verified figures appear in the narrative."""
 
     normalized = narrative.replace(",", "")
+    normalized_lower = normalized.lower()
 
     checks = {
-        "Cleaned revenue 97,358.30": "97358.30" in normalized
-        or "97358.3" in normalized,
-
+        "Cleaned revenue 97,358.30": (
+            "97358.30" in normalized or "97358.3" in normalized
+        ),
         "COD return rate 44.4": "44.4" in normalized,
-
         "COD + Tier-2 return rate 54.5": "54.5" in normalized,
-
-        "Duplicate reconciliation delta 2,501.90": "2501.90" in normalized
-        or "2501.9" in normalized,
-
+        "Duplicate reconciliation delta 2,501.90": (
+            "2501.90" in normalized or "2501.9" in normalized
+        ),
         "March peak revenue 20,318.90": (
-            "march" in narrative.lower()
+            "march" in normalized_lower
             and ("20318.90" in normalized or "20318.9" in normalized)
-        )
+        ),
     }
-
-    all_passed = True
 
     for name, passed in checks.items():
         print(f"{name}: {'PASS' if passed else 'FAIL'}")
-        assert passed, f"Numeric accuracy check failed: {name}"
+
+    # Assert only after displaying the result for every required figure.
+    assert all(checks.values()), (
+        "Numeric accuracy check failed: one or more required figures are missing."
+    )
 
     print("\nNumeric accuracy check: PASS")
-
     return True
-
 
 
 
@@ -192,15 +215,28 @@ if __name__ == "__main__":
     print("\n" + narrative)
 
     if online_success:
-        sample_path.write_text(
-            narrative.strip() + "\n",
-            encoding="utf-8"
-        )
-        print("\nSaved successful Gemini output to sample_output.txt")
+        try:
+            check_narrative_numbers(narrative)
 
-        # Check the saved sample, as required by the project brief.
-        saved_narrative = sample_path.read_text(encoding="utf-8")
-        check_narrative_numbers(saved_narrative)
+        except AssertionError:
+            print("\nGemini response did not include all required figures.")
+            print("Using offline fallback. The sample file was not updated.")
+
+            fallback_result = generate_scr_narrative_offline(findings)
+            fallback_narrative = fallback_result["narrative"]
+
+            print("\n" + fallback_narrative)
+            check_narrative_numbers(fallback_narrative)
+
+        else:
+            sample_path.write_text(
+                narrative.strip() + "\n",
+                encoding="utf-8"
+            )
+            print("\nSaved validated Gemini output to sample_output.txt")
+
+            saved_narrative = sample_path.read_text(encoding="utf-8")
+            check_narrative_numbers(saved_narrative)
+
     else:
-        # Keep the existing successful Gemini sample unchanged.
         check_narrative_numbers(narrative)
