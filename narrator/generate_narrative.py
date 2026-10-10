@@ -164,24 +164,43 @@ def check_narrative_numbers(narrative: str) -> bool:
 
 if __name__ == "__main__":
     project_dir = Path(__file__).resolve().parent.parent
-    findings_path = project_dir / "narrator" / "findings.json"
+    narrator_dir = project_dir / "narrator"
+    findings_path = narrator_dir / "findings.json"
+    sample_path = narrator_dir / "sample_output.txt"
 
     with open(findings_path, "r", encoding="utf-8") as f:
         findings = json.load(f)
 
     api_key = os.getenv("GEMINI_API_KEY")
+    online_success = False
 
     if api_key:
         result = generate_scr_narrative(findings)
 
         if result["status"] == "error":
-         print("Gemini API failed.")
-         print("Error:", result["message"])
-         print("Using offline fallback.")
-        result = generate_scr_narrative_offline(findings)
+            print("Gemini API failed.")
+            print("Error:", result["message"])
+            print("Using offline fallback.")
+            result = generate_scr_narrative_offline(findings)
+        else:
+            online_success = True
     else:
         print("No GEMINI_API_KEY found. Using offline fallback.")
         result = generate_scr_narrative_offline(findings)
 
-    print("\n" + result["narrative"])
-    check_narrative_numbers(result["narrative"])
+    narrative = result["narrative"]
+    print("\n" + narrative)
+
+    if online_success:
+        sample_path.write_text(
+            narrative.strip() + "\n",
+            encoding="utf-8"
+        )
+        print("\nSaved successful Gemini output to sample_output.txt")
+
+        # Check the saved sample, as required by the project brief.
+        saved_narrative = sample_path.read_text(encoding="utf-8")
+        check_narrative_numbers(saved_narrative)
+    else:
+        # Keep the existing successful Gemini sample unchanged.
+        check_narrative_numbers(narrative)
