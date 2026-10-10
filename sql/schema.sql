@@ -4,7 +4,7 @@ CREATE TABLE customers(
     city VARCHAR(50) NOT NULL,
     city_tier INT NOT NULL,
     signup_date DATE NOT NULL,
-    acquisition_source VARCHAR(50) NOT NULL
+    acquisition_source VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE products(
