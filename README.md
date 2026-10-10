@@ -151,6 +151,8 @@ At the end of the analysis, the script generates:
 narrator/findings.json
 ```
 
+Task 5 of Part 2, implemented at the end of `analysis/clean_and_eda.py`, generates `narrator/findings.json` from the calculated results.
+
 This JSON file contains verified findings calculated by the Python analysis. It supplies the input for the GenAI narrator, keeping the reported figures connected to the analysis results.
 
 # 3. Visualization Layer
@@ -248,13 +250,11 @@ The checker prints a PASS or FAIL result for each required figure and reports th
 
 # 6. Sample Output
 
-The generated narrative and numeric accuracy results are saved in:
+The successful Gemini-generated narrative is saved in:
 
-```text
-narrator/sample_output.txt
-```
+`narrator/sample_output.txt`
 
-This file provides a sample of the SCR narrative generated from the verified findings and the results of the numeric accuracy checker.
+The numeric accuracy checker can be run against the saved narrative. It prints a PASS or FAIL result for each of the five required figures and reports the overall result in the terminal.
 
 # 7. End-to-End Execution Order
 
