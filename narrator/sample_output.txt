@@ -1,0 +1,35 @@
+**Situation**
+
+Mamaearth's audited financial baseline establishes a cleaned total revenue of ₹97,358.30
+(revised from a raw total revenue of ₹99,860.20). Analysis of normalized monthly
+performance identifies the true peak month as March 2026, generating verified revenue of
+₹20,318.90. Performance across payment channels shows prepaid methods sustaining
+relatively low return rates, with CARD at 14.7% and UPI at 18.9%. Establishing this
+verified baseline ensures regional operations and finance leadership can plan inventory,
+track growth, and allocate working capital against actual realized demand rather than
+distorted reporting figures.
+
+**Complication**
+
+Operational efficiency and reported margins face severe pressure from payment channel
+dynamics and reporting anomalies. The duplicate reconciliation delta accounts for an
+overstatement of ₹2,501.90 that had to be reconciled out of the gross figures. More
+significantly, reporting in January 2026 showed an apparent revenue of ₹29,582.10, which
+was inflated by outliers; once adjusted, the corrected revenue stands at ₹11,637.10. On
+the fulfillment side, Cash on Delivery (COD) orders demonstrate high volatility with an
+overall return rate of 44.4%. This friction culminates in the highest-risk segment—Tier-2
+cities using COD—where the return rate reaches 54.5%, eroding regional delivery margins
+and locking up inventory in transit.
+
+**Resolution**
+
+To safeguard financial integrity and operational cash flows, finance and regional
+operations must execute immediate controls. Finance heads should institutionalize
+automated duplicate audits to continuously capture the ₹2,501.90 reconciliation variances
+and deploy outlier-detection protocols to prevent distortions like the January swing from
+₹29,582.10 down to ₹11,637.10 from misguiding procurement. Simultaneously, operations must
+target the 44.4% COD return baseline, prioritizing interventions in the Tier-2 COD channel
+to curb its 54.5% return rate. Operational teams should incentivize conversions toward
+CARD (14.7% return rate) and UPI (18.9% return rate), enforce strict dispatch-confirmation
+gates for Tier-2 COD orders, and align future inventory ramp-ups with the true peak month
+benchmark established in March 2026 at ₹20,318.90.
